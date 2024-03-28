@@ -140,4 +140,5 @@ public class InsertionSortTest {
     }
 
     final static LazyLogger logger = new LazyLogger(InsertionSort.class);
+
 }
