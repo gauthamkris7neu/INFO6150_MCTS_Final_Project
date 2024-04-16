@@ -8,13 +8,14 @@ public class ConnectFour {
     private static Player player2;
     private static Player currentPlayer;
     static Random random = new Random();
+    static MCTS mcts = new MCTS(); // Create an instance of MCTS
 
     public static void main(String[] args) {
-        intializeGame();
+        initializeGame();
         runGame();
     }
 
-    static void intializeGame() {
+    static void initializeGame() {
         board = new Board();
         player1 = new Player('X');
         player2 = new Player('O');
@@ -39,7 +40,15 @@ public class ConnectFour {
 
     private static boolean processTurn() {
         board.printBoard();
-        int col = getRandomColumn();
+        int col;
+        if (currentPlayer == player1) {
+            // If current player is player1, use MCTS to find the best move
+            col = mcts.search(board); // Use MCTS to find the best move
+        } else {
+            // If current player is player2, choose a random move
+            col = getRandomColumn();
+        }
+
         if (!board.addDisc(col, currentPlayer.getSymbol())) {
             System.out.println("Column is full, try again.");
             return false;

@@ -1,5 +1,8 @@
 package edu.neu.coe.info6205.mcts.connectfour;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Board {
     private final int ROWS = 6;
     private final int COLS = 7;
@@ -12,6 +15,20 @@ public class Board {
                 board[i][j] = '.';
             }
         }
+    }
+
+    public Board(char[][] board) {
+        this.board = board;
+    }
+
+    public Board copy() {
+        char[][] newBoard = new char[ROWS][COLS];
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                newBoard[i][j] = board[i][j];
+            }
+        }
+        return new Board(newBoard);
     }
 
     public void printBoard() {
@@ -92,5 +109,38 @@ public class Board {
         }
 
         return false;
+    }
+
+    public char[][] getBoard() {
+        return board;
+    }
+
+    public char getCurrentPlayer() {
+        int countX = 0;
+        int countO = 0;
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                if (board[i][j] == 'X') {
+                    countX++;
+                } else if (board[i][j] == 'O') {
+                    countO++;
+                }
+            }
+        }
+        return (countX == countO) ? 'X' : 'O';
+    }
+
+    public List<Integer> getPossibleActions() {
+        List<Integer> actions = new ArrayList<>();
+        for (int col = 0; col < COLS; col++) {
+            if (board[0][col] == '.') {
+                actions.add(col);
+            }
+        }
+        return actions;
+    }
+
+    public boolean isTerminal() {
+        return checkWin('X') || checkWin('O') || isFull();
     }
 }
