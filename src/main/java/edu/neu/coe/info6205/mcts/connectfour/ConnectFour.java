@@ -15,13 +15,6 @@ public class ConnectFour {
         runGame();
     }
 
-    static void initializeGame() {
-        board = new Board();
-        player1 = new Player('X');
-        player2 = new Player('O');
-        chooseStartingPlayer();
-    }
-
     private static void chooseStartingPlayer() {
         if (random.nextBoolean()) {
             currentPlayer = player1;
@@ -76,5 +69,13 @@ public class ConnectFour {
 
     private static void switchPlayer() {
         currentPlayer = (currentPlayer == player1) ? player2 : player1;
+    }
+
+
+    public static void initializeGame() {
+        board = new Board();
+        player1 = new Player('X');
+        player2 = new Player('O');
+        chooseStartingPlayer();
     }
 }
