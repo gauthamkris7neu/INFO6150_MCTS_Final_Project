@@ -7,7 +7,7 @@ public class MCTS {
     private static final int MAX_ITERATIONS = 1000;
 
     private static final double C = Math.sqrt(2); // Exploration constant
-    private Random random;
+    Random random;
 
     public MCTS() {
         random = new Random();
@@ -29,14 +29,14 @@ public class MCTS {
         return rootNode.getChildWithMaxVisits().getAction();
     }
 
-    private Node select(Node node) {
+    Node select(Node node) {
         while (node != null && !node.isLeaf()) {
             node = node.getChildWithMaxUCB();
         }
         return node;
     }
 
-    private Node expand(Node node) {
+    Node expand(Node node) {
         List<Integer> possibleActions = node.getState().getPossibleActions();
         if (possibleActions.isEmpty()) {
             // If there are no possible actions, return the node itself
@@ -52,7 +52,7 @@ public class MCTS {
         return childNode;
     }
 
-    private int simulate(Node node) {
+    int simulate(Node node) {
         Board board = node.getState();
         char currentPlayer = board.getCurrentPlayer();
         while (!board.isTerminal()) {
@@ -69,7 +69,7 @@ public class MCTS {
         }
     }
 
-    private void backpropagate(Node node, int result) {
+    void backpropagate(Node node, int result) {
         while (node != null) {
             node.incrementVisits();
             node.addToScore(result);
