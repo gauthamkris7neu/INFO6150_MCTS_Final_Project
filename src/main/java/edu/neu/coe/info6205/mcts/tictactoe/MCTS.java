@@ -1,18 +1,22 @@
 package edu.neu.coe.info6205.mcts.tictactoe;
 
+import edu.neu.coe.info6205.mcts.core.Game;
+import edu.neu.coe.info6205.mcts.core.MonteCarloTreeSearch;
+
 import java.util.*;
 
-class MCTS {
+class MCTS implements MonteCarloTreeSearch {
     private static final int SIMULATIONS = 1000000;
     private static final double C = Math.sqrt(2);
 
-    public int[] findNextMove(TicTacToe game) {
-        Node root = new Node(game);
+    @Override
+    public int[] findNextMove(Game game){
+        Node root = new Node((TicTacToe) game);
         Random random = new Random();
 
         for (int i = 0; i < SIMULATIONS; i++) {
             Node node = root;
-            TicTacToe state = new TicTacToe(game);
+            TicTacToe state = new TicTacToe((TicTacToe) game);
 
             // Selection phase
             while (!node.untriedMoves.isEmpty() && !node.childNodes.isEmpty()) {
@@ -52,9 +56,6 @@ class MCTS {
         }
     }
 
-
-
-    ;
 
 
 

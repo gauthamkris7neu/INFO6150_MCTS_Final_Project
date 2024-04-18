@@ -1,14 +1,16 @@
 package edu.neu.coe.info6205.mcts.tictactoe;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import edu.neu.coe.info6205.mcts.core.Game;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class TicTacToe {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+public class TicTacToe implements Game {
     char[][] board;
     private char currentPlayer;
     private static final char EMPTY = '-';
@@ -19,7 +21,7 @@ public class TicTacToe {
     public TicTacToe() {
         board = new char[BOARD_SIZE][BOARD_SIZE];
         initializeBoard();
-        currentPlayer = PLAYER_X; // Player X starts the game
+        currentPlayer = PLAYER_X;
     }
 
     public TicTacToe(TicTacToe game) {
@@ -101,6 +103,11 @@ public class TicTacToe {
             board[row][col] = currentPlayer;
             currentPlayer = (currentPlayer == PLAYER_X) ? PLAYER_O : PLAYER_X;
         }
+    }
+
+    @Override
+    public TicTacToe clone() {
+        return new TicTacToe(this);
     }
 
     public int getWinner() {
