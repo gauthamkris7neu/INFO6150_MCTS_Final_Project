@@ -1,22 +1,63 @@
 package edu.neu.coe.info6205.mcts.tictactoe;
 
+import edu.neu.coe.info6205.mcts.core.Game;
+import edu.neu.coe.info6205.mcts.core.MonteCarloTreeSearch;
 import edu.neu.coe.info6205.mcts.core.Node;
 
-/**
- * Class to represent a Monte Carlo Tree Search for TicTacToe.
- */
-public class MCTS {
+import java.util.*;
 
-    public static void main(String[] args) {
-        MCTS mcts = new MCTS(new TicTacToeNode(new TicTacToe().new TicTacToeState()));
-        Node<TicTacToe> root = mcts.root;
+public class MCTS implements MonteCarloTreeSearch {
+    private static final int SIMULATIONS = 1000000;
+    private static final double C = Math.sqrt(2);
+    private final Random random = new Random();
 
-        // This is where you process the MCTS to try to win the game.
+
+    @Override
+    public int[] findNextMove(Game game) {
+        Node root = new TicTacToeNode(game);
+
+
+        for (int i = 0; i < SIMULATIONS; i++) {
+            Node node = root;
+            Game state = game.clone();
+
+            // Selection phase
+            while (!node.getUntriedMoves().isEmpty() && !node.getChildNodes().isEmpty()) {
+                node = node.getBestChild();
+                state.makeMove(node.getMove());
+            }
+
+            // Expansion phase
+            if (!node.getUntriedMoves().isEmpty()) {
+                int randomMove = random.nextInt(node.getUntriedMoves().size());
+                int[] move = node.getUntriedMoves().get(randomMove);
+                node.getUntriedMoves().remove(move);
+                state.makeMove(move);
+                node = node.addChild(state, move);
+            }
+
+            // Simulation phase
+            while (!state.isGameOver()) {
+                List<int[]> availableMoves = state.getAvailableMoves();
+                int randomMove = random.nextInt(availableMoves.size());
+                state.makeMove(availableMoves.get(randomMove));
+            }
+
+            // Backpropagation phase
+            while (node != null) {
+                node.update(state.getWinner());
+                node = node.getParent();  // Ensure getParent is implemented in the Node interface
+            }
+        }
+
+        Node bestChild = root.getBestChild();
+        return bestChild != null ? bestChild.getMove() : getRandomMove(game);
     }
 
-    public MCTS(Node<TicTacToe> root) {
-        this.root = root;
+    private int[] getRandomMove(Game game) {
+        List<int[]> availableMoves = game.getAvailableMoves();
+        Random random = new Random();
+        return availableMoves.get(random.nextInt(availableMoves.size()));
     }
 
-    private final Node<TicTacToe> root;
 }

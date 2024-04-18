@@ -1,101 +1,89 @@
 package edu.neu.coe.info6205.mcts.tictactoe;
 
+import edu.neu.coe.info6205.mcts.core.Game;
 import edu.neu.coe.info6205.mcts.core.Node;
-import edu.neu.coe.info6205.mcts.core.State;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
-public class TicTacToeNode implements Node<TicTacToe> {
+public class TicTacToeNode implements Node {
 
-    /**
-     * @return true if this node is a leaf node (in which case no further exploration is possible).
-     */
-    public boolean isLeaf() {
-        return state().isTerminal();
+    private Node parent;
+    private List<Node> childNodes = new ArrayList<>();
+    private List<int[]> untriedMoves;
+    private double wins = 0;
+    private double visits = 0;
+    private int[] move;
+    private static final double C = Math.sqrt(2);
+
+    public TicTacToeNode(Game game) {
+        this.untriedMoves = new ArrayList<>(game.getAvailableMoves());
+        this.parent = null;
+        this.move = null;
     }
 
-    /**
-     * @return the State of the Game G that this Node represents.
-     */
-    public State<TicTacToe> state() {
-        return state;
+    public TicTacToeNode(Node parent, Game game, int[] move) {
+        this(game);
+        this.parent = parent;
+        this.move = move;
+        this.parent.getChildNodes().add(this);
+        this.parent.getUntriedMoves().removeIf(m -> Arrays.equals(m, move));
     }
 
-    /**
-     * Method to determine if the player who plays to this node is the opening player (by analogy with chess).
-     * For this method, we assume that X goes first so is "white."
-     * NOTE: this assumes a two-player game.
-     *
-     * @return true if this node represents a "white" move; false for "black."
-     */
-    public boolean white() {
-        return state.player() == state.game().opener();
+    @Override
+    public Node addChild(Game state, int[] move) {
+        Node child = new TicTacToeNode(this, state, move);
+        this.childNodes.add(child);
+        this.untriedMoves.removeIf(m -> Arrays.equals(m, move));
+        return child;
     }
 
-    /**
-     * @return the children of this Node.
-     */
-    public Collection<Node<TicTacToe>> children() {
-        return children;
+    @Override
+    public Node getBestChild() {
+        return childNodes.stream()
+                .max(Comparator.comparingDouble(c -> c.getWins() / c.getVisits() + C * Math.sqrt(Math.log(this.visits) / c.getVisits())))
+                .orElse(null);
     }
 
-    /**
-     * Method to add a child to this Node.
-     *
-     * @param state the State for the new chile.
-     */
-    public void addChild(State<TicTacToe> state) {
-        children.add(new TicTacToeNode(state));
+    @Override
+    public List<Node> getChildNodes() {
+        return this.childNodes;
     }
 
-    /**
-     * This method sets the number of wins and playouts according to the children states.
-     */
-    public void backPropagate() {
-        playouts = 0;
-        wins = 0;
-        for (Node<TicTacToe> child : children) {
-            wins += child.wins();
-            playouts += child.playouts();
-        }
+    @Override
+    public List<int[]> getUntriedMoves() {
+        return this.untriedMoves;
     }
 
-    /**
-     * @return the score for this Node and its descendents a win is worth 2 points, a draw is worth 1 point.
-     */
-    public int wins() {
-        return wins;
+    @Override
+    public void removeMoveFromUntriedMoves(int[] move) {
+        this.untriedMoves.removeIf(m -> Arrays.equals(m, move));
     }
 
-    /**
-     * @return the number of playouts evaluated (including this node). A leaf node will have a playouts value of 1.
-     */
-    public int playouts() {
-        return playouts;
+    @Override
+    public double getWins() {
+        return this.wins;
     }
 
-    public TicTacToeNode(State<TicTacToe> state) {
-        this.state = state;
-        children = new ArrayList<>();
-        initializeNodeData();
+    @Override
+    public double getVisits() {
+        return this.visits;
     }
 
-    private void initializeNodeData() {
-        if (isLeaf()) {
-            playouts = 1;
-            Optional<Integer> winner = state.winner();
-            if (winner.isPresent())
-                wins = 2; // CONSIDER check that the winner is the correct player. We shouldn't need to.
-            else
-                wins = 1; // a draw.
-        }
+    @Override
+    public int[] getMove() {
+        return this.move;
     }
 
-    private final State<TicTacToe> state;
-    private final ArrayList<Node<TicTacToe>> children;
-
-    private int wins;
-    private int playouts;
+    @Override
+    public void update(double result) {
+        this.visits++;
+        this.wins += result;
+    }
+    @Override
+    public Node getParent() {
+        return this.parent;  // Return the parent node
+    }
 }
