@@ -1,25 +1,56 @@
 package edu.neu.coe.info6205.mcts.tictactoe;
 
-import edu.neu.coe.info6205.mcts.core.State;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import java.util.Optional;
+import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TicTacToeTest {
 
-    /**
-     *
-     */
     @Test
-    public void runGame() {
-        long seed = 0L;
-        TicTacToe target = new TicTacToe(seed); // games run here will all be deterministic.
-        State<TicTacToe> state = target.runGame();
-        Optional<Integer> winner = state.winner();
-        if (winner.isPresent()) assertEquals(Integer.valueOf(TicTacToe.X), winner.get());
-        else fail("no winner");
+    void testMakeMove() {
+        TicTacToe game = new TicTacToe();
+        game.makeMove(new int[]{0, 0});
+        assertEquals('X', game.board[0][0]);
+        game.makeMove(new int[]{1, 1});
+        assertEquals('O', game.board[1][1]);
+    }
+
+    @Test
+    void testIsGameOver() {
+        TicTacToe game = new TicTacToe();
+        assertFalse(game.isGameOver());
+        game.makeMove(new int[]{0, 0});
+        game.makeMove(new int[]{1, 1});
+        game.makeMove(new int[]{0, 1});
+        game.makeMove(new int[]{1, 0});
+        assertFalse(game.isGameOver());
+        game.makeMove(new int[]{0, 2});
+        assertTrue(game.isGameOver());
+        assertEquals(1, game.getWinner());
+    }
+
+    @Test
+    void testGetAvailableMoves() {
+        TicTacToe game = new TicTacToe();
+        List<int[]> availableMoves = game.getAvailableMoves();
+        assertEquals(9, availableMoves.size());
+        game.makeMove(new int[]{0, 0});
+        game.makeMove(new int[]{1, 1});
+        availableMoves = game.getAvailableMoves();
+        assertEquals(7, availableMoves.size());
+    }
+
+    @Test
+    void testGetWinner() {
+        TicTacToe game = new TicTacToe();
+        assertEquals(0, game.getWinner());
+        game.makeMove(new int[]{0, 0});
+        game.makeMove(new int[]{1, 1});
+        game.makeMove(new int[]{0, 1});
+        game.makeMove(new int[]{1, 0});
+        game.makeMove(new int[]{0, 2});
+        assertEquals(1, game.getWinner());
     }
 }
