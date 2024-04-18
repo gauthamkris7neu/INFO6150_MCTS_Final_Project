@@ -1,12 +1,11 @@
 package edu.neu.coe.info6205.mcts.tictactoe;
 
 import org.junit.jupiter.api.Test;
-
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TicTacToeTest {
+class TicTacToeTest {
 
     @Test
     void testMakeMove() {

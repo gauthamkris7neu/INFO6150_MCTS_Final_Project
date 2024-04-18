@@ -6,15 +6,16 @@ import edu.neu.coe.info6205.mcts.core.Node;
 
 import java.util.*;
 
-class MCTS implements MonteCarloTreeSearch {
+public class MCTS implements MonteCarloTreeSearch {
     private static final int SIMULATIONS = 1000000;
     private static final double C = Math.sqrt(2);
+    private final Random random = new Random();
 
 
     @Override
     public int[] findNextMove(Game game) {
         Node root = new TicTacToeNode(game);
-        Random random = new Random();
+
 
         for (int i = 0; i < SIMULATIONS; i++) {
             Node node = root;
