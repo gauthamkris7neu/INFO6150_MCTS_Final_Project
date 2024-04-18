@@ -14,6 +14,7 @@ public interface Node {
     double getWins();
     double getVisits();
     int[] getMove();
+    int getDepth();
 
     Node getParent();
 }

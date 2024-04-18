@@ -7,13 +7,15 @@ import edu.neu.coe.info6205.mcts.core.Node;
 import java.util.*;
 
 public class MCTS implements MonteCarloTreeSearch {
-    private static final int SIMULATIONS = 1000000;
+    private static final int SIMULATIONS = 10000;
+    MetricsCollector collector = new MetricsCollector();
     private static final double C = Math.sqrt(2);
     private final Random random = new Random();
 
 
     @Override
     public int[] findNextMove(Game game) {
+        long startTime = System.currentTimeMillis();
         Node root = new TicTacToeNode(game);
 
 
@@ -49,9 +51,21 @@ public class MCTS implements MonteCarloTreeSearch {
                 node = node.getParent();  // Ensure getParent is implemented in the Node interface
             }
         }
+        long endTime = System.currentTimeMillis();
+        long executionTime = endTime - startTime;
 
+        Runtime runtime = Runtime.getRuntime();
+        runtime.gc();
+        long memory = runtime.totalMemory() - runtime.freeMemory();
+        System.out.println("Execution time: " + executionTime + " ms");
+        System.out.println("Memory used: " + memory + " bytes");
+        System.out.println("Total nodes created: " + TicTacToeNode.getTotalNodes());
+        int maxDepth = TicTacToeNode.getMaxDepth(root);
+        System.out.println("Maximum depth of the tree: " + maxDepth);
         Node bestChild = root.getBestChild();
-        return bestChild != null ? bestChild.getMove() : getRandomMove(game);
+        int [] bestMove = bestChild != null ? bestChild.getMove() : getRandomMove(game);
+        collector.collect(new Metrics(executionTime, memory, TicTacToeNode.getTotalNodes(), maxDepth, bestMove));
+        return bestMove;
     }
 
     private int[] getRandomMove(Game game) {

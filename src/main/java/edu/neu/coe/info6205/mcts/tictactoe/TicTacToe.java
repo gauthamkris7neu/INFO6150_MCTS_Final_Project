@@ -18,6 +18,8 @@ public class TicTacToe implements Game {
     private static final char PLAYER_O = 'O';
     private static final int BOARD_SIZE = 3;
 
+    private final Random random = new Random();
+
     public TicTacToe() {
         board = new char[BOARD_SIZE][BOARD_SIZE];
         initializeBoard();
@@ -132,13 +134,20 @@ public class TicTacToe implements Game {
     public static void main(String[] args) {
         TicTacToe game = new TicTacToe();
         MCTS mcts = new MCTS();
+        boolean useMCTS = true;
 
         while (!game.isGameOver()) {
-            int[] move = mcts.findNextMove(game);
+            int[] move;
+            if(useMCTS) {
+             move = mcts.findNextMove(game);
+            } else {
+                List<int[]> availableMoves = game.getAvailableMoves();
+                move = availableMoves.get(game.random.nextInt(availableMoves.size()));
+            }
             game.makeMove(move);
             game.displayBoard();
         }
-
+        mcts.collector.writeToCSV("mcts.csv");
         int winner = game.getWinner();
         if (winner == 1) {
             System.out.println("Player X wins!");

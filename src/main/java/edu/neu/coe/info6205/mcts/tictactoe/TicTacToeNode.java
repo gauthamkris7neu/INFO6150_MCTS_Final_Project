@@ -9,7 +9,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class TicTacToeNode implements Node {
-
+    private static int totalNodes = 0;
     private Node parent;
     private List<Node> childNodes = new ArrayList<>();
     private List<int[]> untriedMoves;
@@ -17,11 +17,16 @@ public class TicTacToeNode implements Node {
     private double visits = 0;
     private int[] move;
     private static final double C = Math.sqrt(2);
+    private int depth = 0;
 
     public TicTacToeNode(Game game) {
+        totalNodes++;
         this.untriedMoves = new ArrayList<>(game.getAvailableMoves());
         this.parent = null;
         this.move = null;
+        if(parent != null) {
+            this.depth = parent.getDepth() + 1;
+        }
     }
 
     public TicTacToeNode(Node parent, Game game, int[] move) {
@@ -30,6 +35,9 @@ public class TicTacToeNode implements Node {
         this.move = move;
         this.parent.getChildNodes().add(this);
         this.parent.getUntriedMoves().removeIf(m -> Arrays.equals(m, move));
+        if(parent != null) {
+            this.depth = parent.getDepth() + 1;
+        }
     }
 
     @Override
@@ -85,5 +93,32 @@ public class TicTacToeNode implements Node {
     @Override
     public Node getParent() {
         return this.parent;  // Return the parent node
+    }
+
+    public static int getTotalNodes() {
+        return totalNodes;
+    }
+
+    public static int getMaxDepth(Node node) {
+        if (node == null) {
+            return -1;  // Base case: empty node has depth -1
+        }
+        if (node instanceof TicTacToeNode) {
+            TicTacToeNode tttNode = (TicTacToeNode) node;
+            int maxDepth = tttNode.getDepth();  // Start with the current node's depth
+            for (Node child : tttNode.getChildNodes()) {
+                int childDepth = getMaxDepth(child);  // Recursively find the depth for each child
+                if (childDepth > maxDepth) {
+                    maxDepth = childDepth;  // Update if a deeper node is found
+                }
+            }
+            return maxDepth;
+        }
+        return -1;  // Return -1 if the node isn't an instance of TicTacToeNode
+    }
+
+    @Override
+    public int getDepth() {
+        return this.depth;
     }
 }
