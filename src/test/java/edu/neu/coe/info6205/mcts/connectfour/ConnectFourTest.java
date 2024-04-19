@@ -13,7 +13,7 @@ public class ConnectFourTest{
     @Before
     public void setUp() {
         System.setOut(new PrintStream(outContent));  // Redirect System.out to capture outputs
-        ConnectFour.intializeGame();  // Initialize game to reset the board and players
+        ConnectFour.initializeGame();  // Initialize game to reset the board and players
     }
 
     @After
@@ -23,7 +23,7 @@ public class ConnectFourTest{
 
     @Test
     public void testGameInitializationOutputs() {
-        ConnectFour.intializeGame();
+        ConnectFour.initializeGame();
         String output = outContent.toString();
         assertTrue(output.contains("Player X starts the game") || output.contains("Player O starts the game"));
     }
@@ -35,7 +35,7 @@ public class ConnectFourTest{
         boolean startsWithO = false;
         for (int i = 0; i < 10; i++) {
             outContent.reset();  // Clear the output stream before each initialization
-            ConnectFour.intializeGame();
+            ConnectFour.initializeGame();
             if (outContent.toString().contains("Player X starts the game")) {
                 startsWithX = true;
             }
