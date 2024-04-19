@@ -1,7 +1,12 @@
 package edu.neu.coe.info6205.mcts.tictactoe;
 
 
-import edu.neu.coe.info6205.mcts.tictactoe.MCTS.MonteCarloTreeSearch;
+import java.util.Scanner;
+
+
+
+import edu.neu.coe.info6205.mcts.tictactoe.MCTS.MCTSAnalysis;
+
 
 import java.util.Scanner;
 
@@ -14,7 +19,7 @@ public class TicTacToeGame {
         int choice = scanner.nextInt();
 
         Board board = new Board();
-        MonteCarloTreeSearch mcts = new MonteCarloTreeSearch();
+        MCTSAnalysis mcts = new MCTSAnalysis(); // Using MCTSAnalysis class
 
         if (choice == 1) {
             // MCTS vs. MCTS
@@ -26,10 +31,11 @@ public class TicTacToeGame {
             System.out.println("Invalid choice");
         }
 
+        mcts.saveDataToCSV("mcts_game_data.csv"); // Save the CSV file at the end of the game
         scanner.close();
     }
 
-    private static void runMctsVsMcts(Board board, MonteCarloTreeSearch mcts) {
+    private static void runMctsVsMcts(Board board, MCTSAnalysis mcts) {
         int currentPlayer = 1;
         while (board.checkStatus() == Board.IN_PROGRESS) {
             System.out.println("Current board:");
@@ -41,7 +47,7 @@ public class TicTacToeGame {
         board.printStatus();
     }
 
-    private static void runHumanVsMcts(Board board, MonteCarloTreeSearch mcts, Scanner scanner) {
+    private static void runHumanVsMcts(Board board, MCTSAnalysis mcts, Scanner scanner) {
         int currentPlayer = 1;  // Let's assume the human is player 1
         while (board.checkStatus() == Board.IN_PROGRESS) {
             System.out.println("Current board:");

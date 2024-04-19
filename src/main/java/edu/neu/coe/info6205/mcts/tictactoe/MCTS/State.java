@@ -97,4 +97,5 @@ public class State {
     void togglePlayer() {
         this.playerNo = 3 - this.playerNo;
     }
+
 }
