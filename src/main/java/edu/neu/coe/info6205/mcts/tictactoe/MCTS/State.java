@@ -7,6 +7,7 @@ import edu.neu.coe.info6205.mcts.tictactoe.Position;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class State {
@@ -30,23 +31,23 @@ public class State {
         this.board = new Board(board);
     }
 
-    Board getBoard() {
+    public Board getBoard() {
         return board;
     }
 
-    void setBoard(Board board) {
+    public void setBoard(Board board) {
         this.board = board;
     }
 
-    int getPlayerNo() {
+    public int getPlayerNo() {
         return playerNo;
     }
 
-    void setPlayerNo(int playerNo) {
+    public void setPlayerNo(int playerNo) {
         this.playerNo = playerNo;
     }
 
-    int getOpponent() {
+    public int getOpponent() {
         return 3 - playerNo;
     }
 
@@ -58,11 +59,11 @@ public class State {
         this.visitCount = visitCount;
     }
 
-    double getWinScore() {
+    public double getWinScore() {
         return winScore;
     }
 
-    void setWinScore(double winScore) {
+    public void setWinScore(double winScore) {
         this.winScore = winScore;
     }
 
@@ -78,24 +79,38 @@ public class State {
         return possibleStates;
     }
 
-    void incrementVisit() {
+    public void incrementVisit() {
         this.visitCount++;
     }
 
-    void addScore(double score) {
+    public void addScore(double score) {
         if (this.winScore != Integer.MIN_VALUE)
             this.winScore += score;
     }
 
-    void randomPlay() {
+    public void randomPlay() {
         List<Position> availablePositions = this.board.getEmptyPositions();
         int totalPossibilities = availablePositions.size();
         int selectRandom = (int) (Math.random() * totalPossibilities);
         this.board.performMove(this.playerNo, availablePositions.get(selectRandom));
     }
 
-    void togglePlayer() {
+    public void togglePlayer() {
         this.playerNo = 3 - this.playerNo;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        State other = (State) obj;
+        return this.getPlayerNo() == other.getPlayerNo() &&
+                this.getVisitCount() == other.getVisitCount() &&
+                Double.compare(this.getWinScore(), other.getWinScore()) == 0 &&
+                this.getBoard().equals(other.getBoard());
     }
 
 }
