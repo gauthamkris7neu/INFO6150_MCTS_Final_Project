@@ -2,6 +2,9 @@
 
 Welcome to the repository for the implementations of Tic-Tac-Toe and Connect Four using the Monte Carlo Tree Search (MCTS) algorithm. This project aims to demonstrate the application of MCTS to simple and moderately complex games, providing robust AI opponents in both.
 
+## REPORT
+It is present in the mcts folder [Final Report](https://github.com/gauthamkris7neu/INFO6150_MCTS_Final_Project/blob/final_changes/src/main/java/edu/neu/coe/info6205/mcts/MCTS%20REPORT.pdf).
+
 ## Overview
 
 This repository contains Java implementations for the following games:
