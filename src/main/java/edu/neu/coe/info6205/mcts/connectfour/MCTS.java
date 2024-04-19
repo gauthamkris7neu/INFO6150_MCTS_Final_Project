@@ -9,12 +9,18 @@ public class MCTS {
     private static final double C = Math.sqrt(2); // Exploration constant
     Random random;
 
+    static int totalNodesCreated = 0;
+    static double averageDecisionTime = 0;
+    static int totalDecisionTime = 0;
+
     public MCTS() {
         random = new Random();
     }
 
     public int search(Board board) {
+        long startTime = System.currentTimeMillis();
         Node rootNode = new Node(board.copy()); // Create a copy of the current board state as the root node
+        totalNodesCreated++;
         for (int i = 0; i < MAX_ITERATIONS; i++) {
             Node selectedNode = select(rootNode);
             if (selectedNode == null) {
@@ -25,6 +31,9 @@ public class MCTS {
             int simulationResult = simulate(expandedNode);
             backpropagate(expandedNode, simulationResult);
         }
+        long endTime = System.currentTimeMillis();
+        totalDecisionTime += endTime - startTime;
+        averageDecisionTime = totalDecisionTime;
         // Choose the best move based on the most visited child
         return rootNode.getChildWithMaxVisits().getAction();
     }

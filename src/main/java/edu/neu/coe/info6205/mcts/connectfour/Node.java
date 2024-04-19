@@ -17,6 +17,7 @@ public class Node {
         this.children = new ArrayList<>();
         this.visits = 0;
         this.score = 0.0;
+        MCTS.totalNodesCreated++;
     }
 
     public Board getState() {
